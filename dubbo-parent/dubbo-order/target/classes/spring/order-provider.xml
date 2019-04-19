@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://dubbo.apache.org/schema/dubbo"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd">
+       http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+       http://dubbo.apache.org/schema/dubbo
+       http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
+
+    <!--  指当前应用名称，主要用来给 zookeeper 注册中心计算应用间依赖关系 -->
+    <dubbo:applicaiton name = "order-provider"></dubbo:applicaiton>
+
+    <!--  用来声明一个注册中心，这里声明了一个id 为 registry 的注册中心，地址是本地服务器的
+     2181 端口（这里要与 zookeeper 配置文件的 clientPort 属性值一致）。 -->
+    <dubbo:registry address = "zookeeper://localhost:2181"></dubbo:registry>
+
+    <!--  协议在 28080 端口暴露服务，其他应用可以通过这个接口调用服务。-->
+    <dubbo:protocol name = "dubbo" port = "28080"></dubbo:protocol>
+
+    <!-- 声明需要暴露的服务接口 -->
+    <dubbo:service interface="cn.sen.dubbo.service.OrderService" ref="orderService" />
+
+    <!-- 和本地bean一样实现服务 -->
+    <bean id="orderService" class="cn.sen.dubbo.service.OrderServiceImpl" />
 
 </beans>
